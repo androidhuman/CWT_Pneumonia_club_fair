@@ -1,0 +1,22 @@
+[
+  {
+    "plain": "unet_00_plain.png",
+    "overlay": "unet_00_overlay.png",
+    "dice": 0.9584
+  },
+  {
+    "plain": "unet_01_plain.png",
+    "overlay": "unet_01_overlay.png",
+    "dice": 0.9637
+  },
+  {
+    "plain": "unet_02_plain.png",
+    "overlay": "unet_02_overlay.png",
+    "dice": 0.9665
+  },
+  {
+    "plain": "unet_03_plain.png",
+    "overlay": "unet_03_overlay.png",
+    "dice": 0.9694
+  }
+]

@@ -1,0 +1,7 @@
+# raw datasets - too large / licensing restricts redistribution, keep local only
+data/
+
+__pycache__/
+*.pyc
+
+.streamlit/secrets.toml

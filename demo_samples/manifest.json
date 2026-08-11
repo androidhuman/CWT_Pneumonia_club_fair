@@ -1,0 +1,302 @@
+[
+  {
+    "id": 0,
+    "plain_image": "sample_00_plain.png",
+    "overlay_image": "sample_00_overlay.png",
+    "hot_mask": "sample_00_hotmask.png",
+    "true_label": "pneumonia",
+    "predicted_prob": 0.1615,
+    "predicted_label": "normal",
+    "correct": false
+  },
+  {
+    "id": 1,
+    "plain_image": "sample_01_plain.png",
+    "overlay_image": "sample_01_overlay.png",
+    "hot_mask": "sample_01_hotmask.png",
+    "true_label": "pneumonia",
+    "predicted_prob": 0.996,
+    "predicted_label": "pneumonia",
+    "correct": true
+  },
+  {
+    "id": 2,
+    "plain_image": "sample_02_plain.png",
+    "overlay_image": "sample_02_overlay.png",
+    "hot_mask": "sample_02_hotmask.png",
+    "true_label": "normal",
+    "predicted_prob": 0.0118,
+    "predicted_label": "normal",
+    "correct": true
+  },
+  {
+    "id": 3,
+    "plain_image": "sample_03_plain.png",
+    "overlay_image": "sample_03_overlay.png",
+    "hot_mask": "sample_03_hotmask.png",
+    "true_label": "pneumonia",
+    "predicted_prob": 0.9999,
+    "predicted_label": "pneumonia",
+    "correct": true
+  },
+  {
+    "id": 4,
+    "plain_image": "sample_04_plain.png",
+    "overlay_image": "sample_04_overlay.png",
+    "hot_mask": "sample_04_hotmask.png",
+    "true_label": "pneumonia",
+    "predicted_prob": 0.9997,
+    "predicted_label": "pneumonia",
+    "correct": true
+  },
+  {
+    "id": 5,
+    "plain_image": "sample_05_plain.png",
+    "overlay_image": "sample_05_overlay.png",
+    "hot_mask": "sample_05_hotmask.png",
+    "true_label": "normal",
+    "predicted_prob": 0.3193,
+    "predicted_label": "normal",
+    "correct": true
+  },
+  {
+    "id": 6,
+    "plain_image": "sample_06_plain.png",
+    "overlay_image": "sample_06_overlay.png",
+    "hot_mask": "sample_06_hotmask.png",
+    "true_label": "normal",
+    "predicted_prob": 0.9553,
+    "predicted_label": "pneumonia",
+    "correct": false
+  },
+  {
+    "id": 7,
+    "plain_image": "sample_07_plain.png",
+    "overlay_image": "sample_07_overlay.png",
+    "hot_mask": "sample_07_hotmask.png",
+    "true_label": "pneumonia",
+    "predicted_prob": 0.9974,
+    "predicted_label": "pneumonia",
+    "correct": true
+  },
+  {
+    "id": 8,
+    "plain_image": "sample_08_plain.png",
+    "overlay_image": "sample_08_overlay.png",
+    "hot_mask": "sample_08_hotmask.png",
+    "true_label": "normal",
+    "predicted_prob": 0.2217,
+    "predicted_label": "normal",
+    "correct": true
+  },
+  {
+    "id": 9,
+    "plain_image": "sample_09_plain.png",
+    "overlay_image": "sample_09_overlay.png",
+    "hot_mask": "sample_09_hotmask.png",
+    "true_label": "pneumonia",
+    "predicted_prob": 1.0,
+    "predicted_label": "pneumonia",
+    "correct": true
+  },
+  {
+    "id": 10,
+    "plain_image": "sample_10_plain.png",
+    "overlay_image": "sample_10_overlay.png",
+    "hot_mask": "sample_10_hotmask.png",
+    "true_label": "pneumonia",
+    "predicted_prob": 1.0,
+    "predicted_label": "pneumonia",
+    "correct": true
+  },
+  {
+    "id": 11,
+    "plain_image": "sample_11_plain.png",
+    "overlay_image": "sample_11_overlay.png",
+    "hot_mask": "sample_11_hotmask.png",
+    "true_label": "normal",
+    "predicted_prob": 0.0199,
+    "predicted_label": "normal",
+    "correct": true
+  },
+  {
+    "id": 12,
+    "plain_image": "sample_12_plain.png",
+    "overlay_image": "sample_12_overlay.png",
+    "hot_mask": "sample_12_hotmask.png",
+    "true_label": "pneumonia",
+    "predicted_prob": 0.9999,
+    "predicted_label": "pneumonia",
+    "correct": true
+  },
+  {
+    "id": 13,
+    "plain_image": "sample_13_plain.png",
+    "overlay_image": "sample_13_overlay.png",
+    "hot_mask": "sample_13_hotmask.png",
+    "true_label": "pneumonia",
+    "predicted_prob": 0.9993,
+    "predicted_label": "pneumonia",
+    "correct": true
+  },
+  {
+    "id": 14,
+    "plain_image": "sample_14_plain.png",
+    "overlay_image": "sample_14_overlay.png",
+    "hot_mask": "sample_14_hotmask.png",
+    "true_label": "normal",
+    "predicted_prob": 0.0198,
+    "predicted_label": "normal",
+    "correct": true
+  },
+  {
+    "id": 15,
+    "plain_image": "sample_15_plain.png",
+    "overlay_image": "sample_15_overlay.png",
+    "hot_mask": "sample_15_hotmask.png",
+    "true_label": "pneumonia",
+    "predicted_prob": 1.0,
+    "predicted_label": "pneumonia",
+    "correct": true
+  },
+  {
+    "id": 16,
+    "plain_image": "sample_16_plain.png",
+    "overlay_image": "sample_16_overlay.png",
+    "hot_mask": "sample_16_hotmask.png",
+    "true_label": "normal",
+    "predicted_prob": 0.2367,
+    "predicted_label": "normal",
+    "correct": true
+  },
+  {
+    "id": 17,
+    "plain_image": "sample_17_plain.png",
+    "overlay_image": "sample_17_overlay.png",
+    "hot_mask": "sample_17_hotmask.png",
+    "true_label": "normal",
+    "predicted_prob": 0.0366,
+    "predicted_label": "normal",
+    "correct": true
+  },
+  {
+    "id": 18,
+    "plain_image": "sample_18_plain.png",
+    "overlay_image": "sample_18_overlay.png",
+    "hot_mask": "sample_18_hotmask.png",
+    "true_label": "pneumonia",
+    "predicted_prob": 1.0,
+    "predicted_label": "pneumonia",
+    "correct": true
+  },
+  {
+    "id": 19,
+    "plain_image": "sample_19_plain.png",
+    "overlay_image": "sample_19_overlay.png",
+    "hot_mask": "sample_19_hotmask.png",
+    "true_label": "normal",
+    "predicted_prob": 0.1652,
+    "predicted_label": "normal",
+    "correct": true
+  },
+  {
+    "id": 20,
+    "plain_image": "sample_20_plain.png",
+    "overlay_image": "sample_20_overlay.png",
+    "hot_mask": "sample_20_hotmask.png",
+    "true_label": "normal",
+    "predicted_prob": 0.0357,
+    "predicted_label": "normal",
+    "correct": true
+  },
+  {
+    "id": 21,
+    "plain_image": "sample_21_plain.png",
+    "overlay_image": "sample_21_overlay.png",
+    "hot_mask": "sample_21_hotmask.png",
+    "true_label": "pneumonia",
+    "predicted_prob": 1.0,
+    "predicted_label": "pneumonia",
+    "correct": true
+  },
+  {
+    "id": 22,
+    "plain_image": "sample_22_plain.png",
+    "overlay_image": "sample_22_overlay.png",
+    "hot_mask": "sample_22_hotmask.png",
+    "true_label": "normal",
+    "predicted_prob": 0.003,
+    "predicted_label": "normal",
+    "correct": true
+  },
+  {
+    "id": 23,
+    "plain_image": "sample_23_plain.png",
+    "overlay_image": "sample_23_overlay.png",
+    "hot_mask": "sample_23_hotmask.png",
+    "true_label": "normal",
+    "predicted_prob": 0.9989,
+    "predicted_label": "pneumonia",
+    "correct": false
+  },
+  {
+    "id": 24,
+    "plain_image": "sample_24_plain.png",
+    "overlay_image": "sample_24_overlay.png",
+    "hot_mask": "sample_24_hotmask.png",
+    "true_label": "normal",
+    "predicted_prob": 0.1076,
+    "predicted_label": "normal",
+    "correct": true
+  },
+  {
+    "id": 25,
+    "plain_image": "sample_25_plain.png",
+    "overlay_image": "sample_25_overlay.png",
+    "hot_mask": "sample_25_hotmask.png",
+    "true_label": "pneumonia",
+    "predicted_prob": 0.9999,
+    "predicted_label": "pneumonia",
+    "correct": true
+  },
+  {
+    "id": 26,
+    "plain_image": "sample_26_plain.png",
+    "overlay_image": "sample_26_overlay.png",
+    "hot_mask": "sample_26_hotmask.png",
+    "true_label": "normal",
+    "predicted_prob": 0.9275,
+    "predicted_label": "pneumonia",
+    "correct": false
+  },
+  {
+    "id": 27,
+    "plain_image": "sample_27_plain.png",
+    "overlay_image": "sample_27_overlay.png",
+    "hot_mask": "sample_27_hotmask.png",
+    "true_label": "pneumonia",
+    "predicted_prob": 0.9984,
+    "predicted_label": "pneumonia",
+    "correct": true
+  },
+  {
+    "id": 28,
+    "plain_image": "sample_28_plain.png",
+    "overlay_image": "sample_28_overlay.png",
+    "hot_mask": "sample_28_hotmask.png",
+    "true_label": "pneumonia",
+    "predicted_prob": 1.0,
+    "predicted_label": "pneumonia",
+    "correct": true
+  },
+  {
+    "id": 29,
+    "plain_image": "sample_29_plain.png",
+    "overlay_image": "sample_29_overlay.png",
+    "hot_mask": "sample_29_hotmask.png",
+    "true_label": "normal",
+    "predicted_prob": 0.6743,
+    "predicted_label": "pneumonia",
+    "correct": false
+  }
+]
