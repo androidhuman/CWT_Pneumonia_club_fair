@@ -1,5 +1,7 @@
 # 명의 vs AI — Chest X-ray Pneumonia Detection Booth Demo
 
+CWT (Crash While Testing) — club fair activity for Ghent University Global Campus, 2026-2027.
+
 Club-fair booth demo reproducing the pipeline structure of Sharma et al.,
 *"Deep learning models for tuberculosis detection and infected region
 visualization in chest X-ray images"* (Intelligent Medicine, 2024), adapted
