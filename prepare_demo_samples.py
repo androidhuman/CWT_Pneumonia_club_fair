@@ -69,8 +69,10 @@ def main():
         gray_arr = np.array(pil_img.resize((IMG_SIZE, IMG_SIZE), Image.BILINEAR), dtype=np.uint8)
         overlay_arr = overlay(gray_arr, heatmap)
 
-        plain_img = Image.fromarray(gray_arr).resize((DISPLAY_SIZE, DISPLAY_SIZE), Image.NEAREST)
-        overlay_img = Image.fromarray(overlay_arr).resize((DISPLAY_SIZE, DISPLAY_SIZE), Image.NEAREST)
+        # LANCZOS here (not NEAREST) so the upscale looks smooth instead of blocky --
+        # the hot mask below stays NEAREST since it must remain a clean binary region
+        plain_img = Image.fromarray(gray_arr).resize((DISPLAY_SIZE, DISPLAY_SIZE), Image.LANCZOS)
+        overlay_img = Image.fromarray(overlay_arr).resize((DISPLAY_SIZE, DISPLAY_SIZE), Image.LANCZOS)
 
         plain_path = os.path.join(OUT_DIR, f"sample_{i:02d}_plain.png")
         overlay_path = os.path.join(OUT_DIR, f"sample_{i:02d}_overlay.png")

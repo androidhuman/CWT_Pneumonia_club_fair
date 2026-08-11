@@ -58,8 +58,8 @@ def main():
             pred_arr = pred_mask.squeeze().numpy()
 
             overlay_arr = overlay_mask(gray_arr, pred_arr)
-            overlay_img = Image.fromarray(overlay_arr).resize((DISPLAY_SIZE, DISPLAY_SIZE), Image.NEAREST)
-            plain_img = Image.fromarray(gray_arr).resize((DISPLAY_SIZE, DISPLAY_SIZE), Image.NEAREST)
+            overlay_img = Image.fromarray(overlay_arr).resize((DISPLAY_SIZE, DISPLAY_SIZE), Image.LANCZOS)
+            plain_img = Image.fromarray(gray_arr).resize((DISPLAY_SIZE, DISPLAY_SIZE), Image.LANCZOS)
 
             overlay_path = os.path.join(OUT_DIR, f"unet_{i:02d}_overlay.png")
             plain_path = os.path.join(OUT_DIR, f"unet_{i:02d}_plain.png")
