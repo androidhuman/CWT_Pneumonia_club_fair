@@ -45,6 +45,15 @@ images/JSON — no model inference at request time.
 
 ## Retraining
 
+`app.py` only needs `requirements.txt` (streamlit, streamlit-image-coordinates,
+Pillow) — it just reads the precomputed images/JSON. Retraining or regenerating
+those static assets needs the heavier `requirements-train.txt` (torch,
+torchvision, medmnist, numpy) on top:
+
+```bash
+pip install -r requirements.txt -r requirements-train.txt
+```
+
 - `train_unet.py` — lung segmentation U-Net (needs the Kaggle ["Chest X-ray
   masks and labels"](https://www.kaggle.com/datasets/nikhilpandey360/chest-xray-masks-and-labels)
   dataset locally under `data/Lung Segmentation/`, not included in this repo)

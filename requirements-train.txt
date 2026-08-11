@@ -1,0 +1,6 @@
+# Only needed for retraining / regenerating static assets (train_*.py, prepare_*.py).
+# The deployed Streamlit app (app.py) doesn't import any of these -- see requirements.txt.
+torch==2.13.0
+torchvision==0.28.0
+medmnist==3.0.2
+numpy==2.2.6
