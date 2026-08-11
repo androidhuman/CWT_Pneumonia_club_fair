@@ -108,23 +108,32 @@ def main():
                f"   |   현재 점수: {st.session_state.score}")
 
     if st.session_state.phase == "guess":
-        st.subheader("1. 정상일까요, 폐렴일까요?")
+        st.subheader("이 흉부 X-ray, 정상일까요 폐렴일까요?")
+        st.caption("사진에서 이상해 보이는 부분을 탭하고, 아래에서 진단도 골라주세요. 둘 다 고르면 다음으로 넘어갑니다.")
+
+        img = Image.open(os.path.join(SAMPLES_DIR, sample["plain_image"]))
+        coords = streamlit_image_coordinates(img, key=f"tap_{st.session_state.round_idx}")
+        if coords is not None:
+            st.session_state.tap_xy = coords
+
+        if st.session_state.tap_xy is not None:
+            st.caption("탭 위치 저장됨 ✅")
+
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("정상", use_container_width=True):
+            normal_type = "primary" if st.session_state.diag_guess == "normal" else "secondary"
+            if st.button("정상", use_container_width=True, type=normal_type):
                 st.session_state.diag_guess = "normal"
-        with col2:
-            if st.button("폐렴", use_container_width=True):
-                st.session_state.diag_guess = "pneumonia"
-
-        if st.session_state.diag_guess:
-            st.subheader("2. 이상해 보이는 부분을 탭하세요")
-            img = Image.open(os.path.join(SAMPLES_DIR, sample["plain_image"]))
-            coords = streamlit_image_coordinates(img, key=f"tap_{st.session_state.round_idx}")
-            if coords is not None:
-                st.session_state.tap_xy = coords
-                st.session_state.phase = "reveal"
                 st.rerun()
+        with col2:
+            pneumonia_type = "primary" if st.session_state.diag_guess == "pneumonia" else "secondary"
+            if st.button("폐렴", use_container_width=True, type=pneumonia_type):
+                st.session_state.diag_guess = "pneumonia"
+                st.rerun()
+
+        if st.session_state.diag_guess is not None and st.session_state.tap_xy is not None:
+            st.session_state.phase = "reveal"
+            st.rerun()
 
     elif st.session_state.phase == "reveal":
         diag_correct = st.session_state.diag_guess == sample["true_label"]
