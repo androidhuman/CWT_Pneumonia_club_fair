@@ -48,8 +48,6 @@ images/JSON — no model inference at request time.
   dataset locally under `data/Lung Segmentation/`, not included in this repo)
 - `train_pneumonia_resnet.py` — pneumonia classifier (ResNet18 transfer
   learning; downloads PneumoniaMNIST automatically)
-- `train_pneumonia_cnn.py` — earlier from-scratch CNN baseline, kept as a
-  fallback (test accuracy 88.0%)
 - `gradcam.py` — Grad-CAM implementation
 - `prepare_demo_samples.py` / `prepare_unet_examples.py` — regenerate the
   static assets the app serves, after retraining

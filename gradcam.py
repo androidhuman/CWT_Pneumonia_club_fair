@@ -1,5 +1,5 @@
 """
-Grad-CAM for PneumoniaCNN (train_pneumonia_cnn.py).
+Grad-CAM for PneumoniaResNet (train_pneumonia_resnet.py).
 
 Hooks model.last_conv to capture (a) its output activations on the forward pass and
 (b) the gradient flowing into that output on the backward pass. Grad-CAM's core idea:
