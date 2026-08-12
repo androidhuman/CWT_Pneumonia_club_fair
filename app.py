@@ -95,7 +95,7 @@ def main():
 
     if st.session_state.round_idx >= len(st.session_state.order):
         score = st.session_state.score
-        max_score = len(st.session_state.order) * 2
+        max_score = sum(2 if s["true_label"] == "pneumonia" else 1 for s in st.session_state.order)
         st.header(f"최종 점수: {score} / {max_score}")
         st.subheader(prize_for_score(score, max_score))
         if st.button("다시 하기"):
@@ -137,8 +137,13 @@ def main():
 
     elif st.session_state.phase == "reveal":
         diag_correct = st.session_state.diag_guess == sample["true_label"]
-        tap_correct = tap_in_hot_region(st.session_state.tap_xy, sample["hot_mask"])
-        round_score = int(diag_correct) + int(tap_correct)
+        # tap-location scoring only makes sense when there's a real abnormality to find --
+        # for normal X-rays, Grad-CAM's heatmap is just leftover/weak "pneumonia evidence"
+        # noise (it always explains the pneumonia logit, never a positive "this is healthy"
+        # signal), so scoring taps against it there would reward essentially-random clicks
+        is_pneumonia_case = sample["true_label"] == "pneumonia"
+        tap_correct = tap_in_hot_region(st.session_state.tap_xy, sample["hot_mask"]) if is_pneumonia_case else None
+        round_score = int(diag_correct) + (int(tap_correct) if is_pneumonia_case else 0)
         st.session_state.score += round_score
 
         st.image(os.path.join(SAMPLES_DIR, sample["overlay_image"]),
@@ -147,8 +152,11 @@ def main():
         st.write(f"**정답**: {sample['true_label']} (당신의 답: {st.session_state.diag_guess}) "
                  f"{'✅' if diag_correct else '❌'}")
         st.write(f"**AI 예측 확률**: {sample['predicted_prob']:.1%} 폐렴")
-        st.write(f"**위치 매칭**: {'✅ AI랑 같은 곳을 봤어요!' if tap_correct else '❌ AI는 다른 곳을 봤어요'}")
-        st.write(f"이번 라운드 점수: **+{round_score}**")
+        if is_pneumonia_case:
+            st.write(f"**위치 매칭**: {'✅ AI랑 같은 곳을 봤어요!' if tap_correct else '❌ AI는 다른 곳을 봤어요'}")
+        else:
+            st.write("**위치 매칭**: 정상 사진은 짚을 이상 부위가 없어서 진단 정확도만 채점했어요")
+        st.write(f"이번 라운드 점수: **+{round_score}** / {2 if is_pneumonia_case else 1}")
 
         if st.button("다음 라운드", type="primary"):
             st.session_state.round_idx += 1
