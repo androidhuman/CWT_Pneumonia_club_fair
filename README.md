@@ -18,19 +18,26 @@ model actually focused.
 | Stage | Method | Result |
 |---|---|---|
 | 1. Lung segmentation | U-Net, trained on Montgomery + Shenzhen CXR/mask pairs (704 images) | test Dice 0.954, Jaccard 0.913, pixel accuracy 97.7% |
-| 2. Pneumonia classification | ResNet18 (ImageNet-pretrained, `layer4`+`fc` fine-tuned) on PneumoniaMNIST | test accuracy 90.9% |
+| 2. Pneumonia classification | ResNet18 (ImageNet-pretrained, `layer4`+`fc` fine-tuned) on the original Kermany chest X-ray images (224px) | test accuracy 89.9% |
 | 3. Explainability | Grad-CAM on the classifier's last conv block | — |
 
 Stage 1 uses a different image domain (Montgomery/Shenzhen, high-res adult
-CXRs with lung masks) than stages 2–3 (PneumoniaMNIST, 28×28, no masks), so
+CXRs with lung masks) than stages 2–3 (Kermany pneumonia CXRs, no masks), so
 it isn't wired into the live classifier — it's shown as a static pipeline
 walkthrough in the app's intro screen, while the interactive game exercises
 stages 2–3.
 
-The classifier's val/test accuracy gap (~97% val vs. ~91% test) reflects a
+The classifier's val/test accuracy gap (~97% val vs. ~90% test) reflects a
 real property of the underlying Kermany pneumonia dataset: train/val and
 test images come from different patient batches, i.e. genuine distribution
-shift rather than pure overfitting.
+shift rather than pure overfitting. An earlier version trained on the 28×28
+PneumoniaMNIST downsample scored almost identically on test (90.9%) despite
+much lower input resolution — confirming this gap is a data-split property,
+not something resolution fixes. The switch to full-resolution training was
+made for a different reason: the displayed image, model input, and Grad-CAM
+heatmap all need to be the same resolution for the tap-scoring hitbox to stay
+pixel-aligned with what's on screen, and a 28px source blown up for display
+couldn't guarantee that.
 
 ## Running locally
 
@@ -57,8 +64,21 @@ pip install -r requirements.txt -r requirements-train.txt
 - `train_unet.py` — lung segmentation U-Net (needs the Kaggle ["Chest X-ray
   masks and labels"](https://www.kaggle.com/datasets/nikhilpandey360/chest-xray-masks-and-labels)
   dataset locally under `data/Lung Segmentation/`, not included in this repo)
-- `train_pneumonia_resnet.py` — pneumonia classifier (ResNet18 transfer
-  learning; downloads PneumoniaMNIST automatically)
+- `train_pneumonia_resnet.py` — defines `PneumoniaResNet` and the shared
+  transform/constants both classifiers use, plus its own v3 training entry
+  point (ResNet18 on PneumoniaMNIST, 28×28; downloads automatically, test
+  accuracy 90.9%). Kept as a live import for v4 below, not just history — its
+  own checkpoint isn't shipped in this repo anymore since v4 superseded it.
+- `train_pneumonia_resnet_hires.py` — pneumonia classifier v4, same
+  architecture trained on the original full-resolution images instead (needs
+  the Kaggle ["Chest X-Ray Images (Pneumonia)"](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia)
+  dataset, Kermany et al., locally under `data/chest_xray/`, not included in
+  this repo). Official train/val/test split is used, with train+val pooled and
+  re-split 90/10 since the official val set is only 16 images. This is the
+  version the deployed app actually uses — displayed image, model input, and
+  Grad-CAM heatmap are all the same resolution, so the tap-scoring hitbox
+  stays pixel-aligned with what's on screen (v3's 28px source, blown up for
+  display, couldn't guarantee that).
 - `gradcam.py` — Grad-CAM implementation
-- `prepare_demo_samples.py` / `prepare_unet_examples.py` — regenerate the
-  static assets the app serves, after retraining
+- `prepare_demo_samples_hires.py` / `prepare_unet_examples.py` — regenerate
+  the static assets the app serves, after retraining

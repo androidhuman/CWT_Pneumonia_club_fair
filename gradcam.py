@@ -1,5 +1,7 @@
 """
-Grad-CAM for PneumoniaResNet (train_pneumonia_resnet.py).
+Grad-CAM for PneumoniaResNet -- works with either checkpoint (train_pneumonia_resnet.py's
+28px-trained weights or train_pneumonia_resnet_hires.py's full-resolution weights),
+since the architecture and last_conv hook point are identical either way.
 
 Hooks model.last_conv to capture (a) its output activations on the forward pass and
 (b) the gradient flowing into that output on the backward pass. Grad-CAM's core idea:
@@ -60,14 +62,17 @@ def load_model(checkpoint_path, device="cpu"):
 
 
 if __name__ == "__main__":
-    from medmnist import PneumoniaMNIST
-    from train_pneumonia_resnet import to_3ch_normalized, IMG_SIZE
+    from PIL import Image
+    from train_pneumonia_resnet import to_3ch_normalized
+    from train_pneumonia_resnet_hires import DATA_DIR, IMG_SIZE
+    import glob
+    import os
 
-    ckpt = r"C:\Users\jihunkwon\PycharmProjects\project_project\CWT_pneumonia\pneumonia_resnet.pt"
+    ckpt = r"C:\Users\jihunkwon\PycharmProjects\project_project\CWT_pneumonia\pneumonia_resnet_hires.pt"
     model = load_model(ckpt)
     cam_tool = GradCAM(model)
 
-    ds = PneumoniaMNIST(split="test", download=True, size=28, transform=to_3ch_normalized(IMG_SIZE))
-    img, label = ds[0]
+    sample_path = glob.glob(os.path.join(DATA_DIR, "test", "PNEUMONIA", "*.jpeg"))[0]
+    img = to_3ch_normalized(IMG_SIZE)(Image.open(sample_path).convert("RGB"))
     heatmap, prob = cam_tool(img.unsqueeze(0))
-    print("label:", label, "predicted prob:", prob, "heatmap shape:", heatmap.shape)
+    print("file:", sample_path, "predicted prob:", prob, "heatmap shape:", heatmap.shape)

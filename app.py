@@ -4,7 +4,7 @@
 Design (see conversation): 5 rounds, visitor taps where they think the abnormality is,
 AI's Grad-CAM heatmap is revealed, points for (1) correct diagnosis and (2) tap landing
 inside the AI's "hot region". No live model inference here -- everything was
-precomputed by prepare_demo_samples.py, so this stays fast even on a phone over wifi.
+precomputed by prepare_demo_samples_hires.py, so this stays fast even on a phone over wifi.
 """
 import json
 import os
@@ -14,7 +14,7 @@ import streamlit as st
 from PIL import Image
 from streamlit_image_coordinates import streamlit_image_coordinates
 
-SAMPLES_DIR = os.path.join(os.path.dirname(__file__), "demo_samples")
+SAMPLES_DIR = os.path.join(os.path.dirname(__file__), "demo_samples_hires")
 UNET_DIR = os.path.join(os.path.dirname(__file__), "unet_examples")
 N_ROUNDS = 5
 
@@ -83,7 +83,7 @@ def main():
 
             st.markdown(
                 "**2단계 · 폐렴 분류 (전이학습 CNN)** — 사전학습된 신경망으로 정상/폐렴을 판정합니다. "
-                "(테스트 정확도 90.9%)\n\n"
+                "(원본 해상도 X-ray로 학습, 테스트 정확도 89.9%)\n\n"
                 "**3단계 · Grad-CAM 시각화** — 분류기가 실제로 어느 부분을 보고 판단했는지 히트맵으로 보여줍니다. "
                 "지금부터 하실 게임이 바로 이 3단계를 직접 확인해보는 겁니다."
             )
