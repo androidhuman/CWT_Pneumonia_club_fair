@@ -109,41 +109,49 @@ def main():
 
     if st.session_state.phase == "guess":
         st.subheader("이 흉부 X-ray, 정상일까요 폐렴일까요?")
-        st.caption("사진에서 이상해 보이는 부분을 탭하고, 아래에서 진단도 골라주세요. 둘 다 고르면 다음으로 넘어갑니다.")
+
+        diag_guess = st.session_state.diag_guess
+        # a "bonus round" (tap the abnormality for an extra point) only ever happens when
+        # the visitor correctly says pneumonia -- a wrong guess skips straight to the
+        # reveal (no point tapping around after already missing the diagnosis), and a
+        # correct "normal" guess has no real hot region to find either way
+        bonus_round = diag_guess == "pneumonia" and sample["true_label"] == "pneumonia"
+
+        if diag_guess is None:
+            st.caption("사진을 보고 진단을 먼저 골라주세요. 폐렴을 맞히면 이상 부위를 짚어 보너스 점수를 노릴 수 있어요.")
+        elif bonus_round:
+            st.caption("정답이에요! 이제 이상해 보이는 부분을 사진에서 탭해보세요 (보너스 점수).")
 
         img = Image.open(os.path.join(SAMPLES_DIR, sample["plain_image"]))
         coords = streamlit_image_coordinates(img, key=f"tap_{st.session_state.round_idx}")
-        if coords is not None:
+        if bonus_round and coords is not None:
             st.session_state.tap_xy = coords
-
-        if st.session_state.tap_xy is not None:
-            st.caption("탭 위치 저장됨 ✅")
-
-        col1, col2 = st.columns(2)
-        with col1:
-            normal_type = "primary" if st.session_state.diag_guess == "normal" else "secondary"
-            if st.button("정상", use_container_width=True, type=normal_type):
-                st.session_state.diag_guess = "normal"
-                st.rerun()
-        with col2:
-            pneumonia_type = "primary" if st.session_state.diag_guess == "pneumonia" else "secondary"
-            if st.button("폐렴", use_container_width=True, type=pneumonia_type):
-                st.session_state.diag_guess = "pneumonia"
-                st.rerun()
-
-        if st.session_state.diag_guess is not None and st.session_state.tap_xy is not None:
             st.session_state.phase = "reveal"
             st.rerun()
 
+        col1, col2 = st.columns(2)
+        with col1:
+            normal_type = "primary" if diag_guess == "normal" else "secondary"
+            if st.button("정상", use_container_width=True, type=normal_type, disabled=diag_guess is not None):
+                st.session_state.diag_guess = "normal"
+                st.session_state.phase = "reveal"  # normal guesses never have a bonus tap round
+                st.rerun()
+        with col2:
+            pneumonia_type = "primary" if diag_guess == "pneumonia" else "secondary"
+            if st.button("폐렴", use_container_width=True, type=pneumonia_type, disabled=diag_guess is not None):
+                st.session_state.diag_guess = "pneumonia"
+                if sample["true_label"] != "pneumonia":
+                    st.session_state.phase = "reveal"  # wrong guess -> straight to reveal
+                st.rerun()
+
     elif st.session_state.phase == "reveal":
         diag_correct = st.session_state.diag_guess == sample["true_label"]
-        # tap-location scoring only makes sense when there's a real abnormality to find --
-        # for normal X-rays, Grad-CAM's heatmap is just leftover/weak "pneumonia evidence"
-        # noise (it always explains the pneumonia logit, never a positive "this is healthy"
-        # signal), so scoring taps against it there would reward essentially-random clicks
         is_pneumonia_case = sample["true_label"] == "pneumonia"
-        tap_correct = tap_in_hot_region(st.session_state.tap_xy, sample["hot_mask"]) if is_pneumonia_case else None
-        round_score = int(diag_correct) + (int(tap_correct) if is_pneumonia_case else 0)
+        # tap_xy only ever gets set during the bonus round (correct pneumonia guess) --
+        # a wrong guess or a correct "normal" guess reveals immediately without one
+        tap_attempted = diag_correct and is_pneumonia_case
+        tap_correct = tap_in_hot_region(st.session_state.tap_xy, sample["hot_mask"]) if tap_attempted else None
+        round_score = int(diag_correct) + (int(tap_correct) if tap_attempted else 0)
         st.session_state.score += round_score
 
         st.image(os.path.join(SAMPLES_DIR, sample["overlay_image"]),
@@ -152,7 +160,9 @@ def main():
         st.write(f"**정답**: {sample['true_label']} (당신의 답: {st.session_state.diag_guess}) "
                  f"{'✅' if diag_correct else '❌'}")
         st.write(f"**AI 예측 확률**: {sample['predicted_prob']:.1%} 폐렴")
-        if is_pneumonia_case:
+        if not diag_correct:
+            st.write("**위치 매칭**: 진단이 틀려서 위치 확인은 생략했어요")
+        elif is_pneumonia_case:
             st.write(f"**위치 매칭**: {'✅ AI랑 같은 곳을 봤어요!' if tap_correct else '❌ AI는 다른 곳을 봤어요'}")
         else:
             st.write("**위치 매칭**: 정상 사진은 짚을 이상 부위가 없어서 진단 정확도만 채점했어요")
