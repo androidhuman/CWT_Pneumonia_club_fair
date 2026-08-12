@@ -56,54 +56,71 @@ def main():
     pneumonia_files = [f for f in files if f[1] == 1]
 
     rng = np.random.default_rng(42)
-    chosen = (
-        [normal_files[i] for i in rng.choice(len(normal_files), size=min(N_PER_CLASS, len(normal_files)), replace=False)]
-        + [pneumonia_files[i] for i in rng.choice(len(pneumonia_files), size=min(N_PER_CLASS, len(pneumonia_files)), replace=False)]
-    )
-    rng.shuffle(chosen)
+    rng.shuffle(normal_files)
+    rng.shuffle(pneumonia_files)
 
+    # Only AI-correct predictions make the demo: a booth visitor comparing their tap
+    # against Grad-CAM shouldn't also have to untangle "the AI itself was wrong here" in
+    # a few seconds. The model's real ~90% test accuracy is still stated on the intro
+    # screen -- this filter only curates which 30 examples get shown, it doesn't hide
+    # the overall number.
     manifest = []
-    for i, (path, label) in enumerate(chosen):
-        raw = Image.open(path).convert("RGB")
+    n_seen = {"normal": 0, "pneumonia": 0}
+    n_found = {"normal": 0, "pneumonia": 0}
+    for label_name, candidates in [("normal", normal_files), ("pneumonia", pneumonia_files)]:
+        for path, label in candidates:
+            if n_found[label_name] >= N_PER_CLASS:
+                break
+            n_seen[label_name] += 1
+            raw = Image.open(path).convert("RGB")
 
-        model_input = model_transform(raw).unsqueeze(0)
-        heatmap, prob = cam_tool(model_input)  # (IMG_SIZE, IMG_SIZE)
+            model_input = model_transform(raw).unsqueeze(0)
+            heatmap, prob = cam_tool(model_input)  # (IMG_SIZE, IMG_SIZE)
+            predicted_label = "pneumonia" if prob > 0.5 else "normal"
+            if predicted_label != label_name:
+                continue  # AI got this one wrong -- skip, don't use it in the demo
 
-        # same resize the model saw, kept as grayscale for display so heatmap stays aligned
-        gray_arr = np.array(raw.convert("L").resize((IMG_SIZE, IMG_SIZE), Image.LANCZOS), dtype=np.uint8)
-        overlay_arr = overlay(gray_arr, heatmap)
+            i = len(manifest)
+            # same resize the model saw, kept as grayscale for display so heatmap stays aligned
+            gray_arr = np.array(raw.convert("L").resize((IMG_SIZE, IMG_SIZE), Image.LANCZOS), dtype=np.uint8)
+            overlay_arr = overlay(gray_arr, heatmap)
 
-        plain_img = Image.fromarray(gray_arr).resize((DISPLAY_SIZE, DISPLAY_SIZE), Image.LANCZOS)
-        overlay_img = Image.fromarray(overlay_arr).resize((DISPLAY_SIZE, DISPLAY_SIZE), Image.LANCZOS)
+            plain_img = Image.fromarray(gray_arr).resize((DISPLAY_SIZE, DISPLAY_SIZE), Image.LANCZOS)
+            overlay_img = Image.fromarray(overlay_arr).resize((DISPLAY_SIZE, DISPLAY_SIZE), Image.LANCZOS)
 
-        plain_path = os.path.join(OUT_DIR, f"sample_{i:02d}_plain.png")
-        overlay_path = os.path.join(OUT_DIR, f"sample_{i:02d}_overlay.png")
-        plain_img.save(plain_path)
-        overlay_img.save(overlay_path)
+            plain_path = os.path.join(OUT_DIR, f"sample_{i:02d}_plain.png")
+            overlay_path = os.path.join(OUT_DIR, f"sample_{i:02d}_overlay.png")
+            plain_img.save(plain_path)
+            overlay_img.save(overlay_path)
 
-        hot_mask = (heatmap >= HOT_THRESHOLD)
-        hot_mask_img = Image.fromarray((hot_mask * 255).astype(np.uint8)).resize(
-            (DISPLAY_SIZE, DISPLAY_SIZE), Image.NEAREST
-        )
-        hot_mask_path = os.path.join(OUT_DIR, f"sample_{i:02d}_hotmask.png")
-        hot_mask_img.save(hot_mask_path)
+            hot_mask = (heatmap >= HOT_THRESHOLD)
+            hot_mask_img = Image.fromarray((hot_mask * 255).astype(np.uint8)).resize(
+                (DISPLAY_SIZE, DISPLAY_SIZE), Image.NEAREST
+            )
+            hot_mask_path = os.path.join(OUT_DIR, f"sample_{i:02d}_hotmask.png")
+            hot_mask_img.save(hot_mask_path)
 
-        manifest.append({
-            "id": i,
-            "plain_image": os.path.basename(plain_path),
-            "overlay_image": os.path.basename(overlay_path),
-            "hot_mask": os.path.basename(hot_mask_path),
-            "true_label": "pneumonia" if label == 1 else "normal",
-            "predicted_prob": round(float(prob), 4),
-            "predicted_label": "pneumonia" if prob > 0.5 else "normal",
-            "correct": (prob > 0.5) == (label == 1),
-        })
+            manifest.append({
+                "id": i,
+                "plain_image": os.path.basename(plain_path),
+                "overlay_image": os.path.basename(overlay_path),
+                "hot_mask": os.path.basename(hot_mask_path),
+                "true_label": label_name,
+                "predicted_prob": round(float(prob), 4),
+                "predicted_label": predicted_label,
+                "correct": True,
+            })
+            n_found[label_name] += 1
+
+    rng.shuffle(manifest)
+    for i, m in enumerate(manifest):
+        m["id"] = i
 
     with open(os.path.join(OUT_DIR, "manifest.json"), "w", encoding="utf-8") as f:
         json.dump(manifest, f, ensure_ascii=False, indent=2)
 
-    n_correct = sum(m["correct"] for m in manifest)
-    print(f"{len(manifest)}개 샘플 생성 완료, 모델이 맞춘 개수: {n_correct}/{len(manifest)}")
+    print(f"{len(manifest)}개 샘플 생성 완료 (전부 AI 정답), "
+          f"정상 {n_seen['normal']}장/폐렴 {n_seen['pneumonia']}장 훑어봄")
     print(f"저장 위치: {OUT_DIR}")
 
 
