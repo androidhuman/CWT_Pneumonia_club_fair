@@ -18,11 +18,16 @@ SAMPLES_DIR = os.path.join(os.path.dirname(__file__), "demo_samples_hires")
 UNET_DIR = os.path.join(os.path.dirname(__file__), "unet_examples")
 N_ROUNDS = 5
 
+# thresholds are a fraction of max_score, not an absolute point count -- max_score
+# itself varies per game (each round is worth 2 points if it's a pneumonia case with a
+# bonus tap round, or 1 point if it's normal with no tap round), so a fixed number like
+# "score >= 9" would be unreachable in a normal-heavy game and trivial in a pneumonia-heavy
+# one. Percent-of-max keeps the tiers fair regardless of which 5 rounds got drawn.
 PRIZE_TIERS = [
-    (9, "🏆 명의 등급 — 대상"),
-    (6, "🩺 레지던트 등급 — 중상"),
-    (3, "📖 의대생 등급 — 소정 참가상"),
-    (0, "🙂 참가상"),
+    (0.9, "🏆 명의 등급 — 대상"),
+    (0.6, "🩺 레지던트 등급 — 중상"),
+    (0.3, "📖 의대생 등급 — 소정 참가상"),
+    (0.0, "🙂 참가상"),
 ]
 
 
@@ -31,9 +36,10 @@ def load_manifest():
         return json.load(f)
 
 
-def prize_for_score(score, max_score=10):
+def prize_for_score(score, max_score):
+    pct = score / max_score if max_score else 0
     for threshold, label in PRIZE_TIERS:
-        if score >= threshold:
+        if pct >= threshold:
             return label
     return PRIZE_TIERS[-1][1]
 
