@@ -53,6 +53,7 @@ def init_game():
     st.session_state.phase = "guess"  # "guess" -> tap to mark -> "reveal" -> show answer
     st.session_state.tap_xy = None
     st.session_state.diag_guess = None
+    st.session_state.round_scored = False
 
 
 def tap_in_hot_region(tap_xy, hotmask_path):
@@ -158,7 +159,12 @@ def main():
         tap_attempted = diag_correct and is_pneumonia_case
         tap_correct = tap_in_hot_region(st.session_state.tap_xy, sample["hot_mask"]) if tap_attempted else None
         round_score = int(diag_correct) + (int(tap_correct) if tap_attempted else 0)
-        st.session_state.score += round_score
+        # guard against re-adding the score every time this phase happens to re-render
+        # (e.g. a websocket reconnect on flaky venue wifi reruns the whole script, and
+        # without this flag it would silently re-execute "score += round_score" again)
+        if not st.session_state.round_scored:
+            st.session_state.score += round_score
+            st.session_state.round_scored = True
 
         st.image(os.path.join(SAMPLES_DIR, sample["overlay_image"]),
                   caption="빨간색이 진할수록 AI가 집중해서 본 부분입니다")
@@ -179,6 +185,7 @@ def main():
             st.session_state.phase = "guess"
             st.session_state.tap_xy = None
             st.session_state.diag_guess = None
+            st.session_state.round_scored = False
             st.rerun()
 
 
