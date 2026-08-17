@@ -7,6 +7,7 @@ inside the AI's "hot region". No live model inference here -- everything was
 precomputed by prepare_demo_samples_hires.py, so this stays fast even on a phone over wifi.
 """
 import json
+import math
 import os
 import random
 
@@ -37,9 +38,19 @@ def load_manifest():
 
 
 def prize_for_score(score, max_score):
-    pct = score / max_score if max_score else 0
+    if not max_score:
+        return PRIZE_TIERS[-1][1]
+    # round the pct-of-max cutoff to the nearest whole point (round-half-up) instead of
+    # requiring score/max_score >= threshold outright. With max_score varying game to game
+    # (5..10 depending on how many pneumonia rounds got drawn), a strict >= comparison means
+    # 90% almost never lands on a whole number, so it silently rounds UP to "must be a
+    # perfect score" for every max_score except 10 -- the one case where 0.9*max_score is
+    # already an integer. That made the top tier hardest to reach on the easiest (normal-
+    # heavy) draws and easiest to reach on the hardest (all-pneumonia) draw. Rounding the
+    # required score instead keeps the tolerance a consistent +/-0.5 points everywhere.
     for threshold, label in PRIZE_TIERS:
-        if pct >= threshold:
+        required = math.floor(threshold * max_score + 0.5)
+        if score >= required:
             return label
     return PRIZE_TIERS[-1][1]
 
