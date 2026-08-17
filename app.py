@@ -78,8 +78,8 @@ def tap_in_hot_region(tap_xy, hotmask_path):
 
 
 def main():
-    st.set_page_config(page_title="명의 vs AI", page_icon="🩻")
-    st.title("🩻 명의 vs AI — 흉부 X-ray 챌린지")
+    st.set_page_config(page_title="사람 vs AI", page_icon="🩻")
+    st.title("🩻 사람 vs AI — 흉부 X-ray 챌린지")
 
     if "order" not in st.session_state:
         st.markdown("흉부 X-ray를 보고 **폐렴 여부**를 맞히고, **어디가 이상한지** 짚어보세요. "
